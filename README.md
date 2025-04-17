@@ -25,6 +25,7 @@ graph LR
 - Use TypeORM and Sqlite for simplicity
 - Generate interfaces from OpenAPI spec using `openapi-typescript-codegen`
 - Do not use NPM Workspaces for shared due to the time constrains
+- Concern: 5000 * 60 * 24 = up to 7.2M records/day(might be a problem with 5 req/min)
 
 ## Ideas
 

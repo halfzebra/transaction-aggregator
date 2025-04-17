@@ -1,4 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class AggregatedTransaction {
@@ -19,4 +24,7 @@ export class AggregatedTransaction {
 
   @Column({ type: 'float' })
   paidOut: number;
+
+  @UpdateDateColumn()
+  lastAggregatedAt: Date;
 }

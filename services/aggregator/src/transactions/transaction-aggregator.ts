@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TransactionDataSource } from './transaction-data-source';
 import { AggregatedTransaction } from '../shared/entities/aggregated-transaction.entity';
 
@@ -10,70 +10,63 @@ export class TransactionAggregator {
 
   constructor(
     @InjectRepository(AggregatedTransaction)
-    private transactionsRepository: Repository<AggregatedTransaction>,
+    private readonly aggregatedTransactionRepository: Repository<AggregatedTransaction>,
     private readonly dataSource: TransactionDataSource,
   ) {}
 
-  async aggregateTransactions() {
-    const endDate = new Date();
-    const startDate = new Date(endDate.getTime() - 2 * 60 * 1000);
+  async aggregateTransactions(): Promise<void> {
+    // Get existing aggregations to track last processed time per user
+    const existingAggregations = await this.aggregatedTransactionRepository.find();
+    const lastAggregatedAt = new Map(
+      existingAggregations.map(agg => [agg.userId, agg.lastAggregatedAt])
+    );
 
-    try {
-      const response = await this.dataSource.getTransactions(startDate, endDate);
-      const items = response?.items ?? [];
+    const transactions = await this.dataSource.getTransactions();
+    const userTransactions = new Map();
 
-      for (const transaction of items) {
-        if (!transaction.userId) {
-          this.logger.warn('Transaction without userId, skipping');
-          continue;
-        }
+    for (const transaction of transactions) {
+      const userId = transaction.userId;
+      const lastProcessed = lastAggregatedAt.get(userId);
 
-        const aggregation = {
-          userId: transaction.userId,
-          earned: transaction.type === 'earned' ? transaction.amount : 0,
-          spent: transaction.type === 'spent' ? transaction.amount : 0,
-          payout: transaction.type === 'payout' ? transaction.amount : 0,
-          paidOut: 0,
-        };
-
-        await this.upsertAggregation(transaction.userId, aggregation);
+      // Skip transactions that were already processed
+      if (lastProcessed && new Date(transaction.timestamp) <= lastProcessed) {
+        continue;
       }
-    } catch (error) {
-      this.logger.error(`Failed to aggregate transactions: ${error.message}`);
-      throw error;
+
+      if (!userTransactions.has(userId)) {
+        // Start with existing totals or initialize new
+        const existing = existingAggregations.find(a => a.userId === userId);
+        userTransactions.set(userId, {
+          userId,
+          earned: existing?.earned ?? 0,
+          spent: existing?.spent ?? 0,
+          payout: existing?.payout ?? 0,
+          paidOut: existing?.paidOut ?? 0,
+        });
+      }
+
+      const userStats = userTransactions.get(userId);
+
+      switch (transaction.type) {
+        case 'earn':
+          userStats.earned += transaction.amount;
+          break;
+        case 'spend':
+          userStats.spent += transaction.amount;
+          break;
+        case 'payout':
+          userStats.paidOut += transaction.amount;
+          break;
+      }
+
+      // Recalculate available payout
+      userStats.payout = userStats.earned - userStats.spent - userStats.paidOut;
     }
-  }
 
-  async upsertAggregation(
-    userId: string,
-    data: Partial<AggregatedTransaction>,
-  ) {
-    const existing = await this.transactionsRepository.findOne({
-      where: { userId },
-    });
-
-    if (existing) {
-      return this.transactionsRepository.update({ userId }, data);
+    // Update database only for users with new transactions
+    for (const stats of userTransactions.values()) {
+      await this.aggregatedTransactionRepository.save(stats);
+      this.logger.log(`Updated aggregation for user ${stats.userId}`);
     }
-
-    return this.transactionsRepository.save({
-      userId,
-      ...data,
-    });
-  }
-
-  async findByUserId(userId: string) {
-    return this.transactionsRepository.findOne({
-      where: { userId },
-    });
-  }
-
-  async findAllPayouts() {
-    return this.transactionsRepository.find({
-      where: {
-        payout: MoreThan(0),
-      },
-      select: ['userId', 'payout'],
-    });
   }
 }
