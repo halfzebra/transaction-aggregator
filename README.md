@@ -1,17 +1,21 @@
-## Focus on
-
-- Integrate all the services in a reliable way first
-- Focus on correctness and data consistency later
+# Transaction Aggregator System
 
 ## Solution Architecture
+
+While making everything as a single service would be more time efficient, it would not be a good design choice. The architecture should be designed to be scalable and maintainable.
 
 ```mermaid
 graph LR
     B[Aggregator Service] -->|5 req/min| A[Transaction API]
     B -->|Write| C[(Database)]
-    D[API Service] -->|Read| C
+    D[Reporter API Service] -->|Read| C
     E[End Users] -->|Millions req/day| D
 ``` 
+
+## Focus on
+
+- Integrate all the services in a reliable way first
+- Focus on correctness and data consistency later
 
 ## Decisions
 
@@ -20,6 +24,7 @@ graph LR
 - NPM for simplicity
 - Use TypeORM and Sqlite for simplicity
 - Generate interfaces from OpenAPI spec using `openapi-typescript-codegen`
+- Do not use NPM Workspaces for shared due to the time constrains
 
 ## Ideas
 

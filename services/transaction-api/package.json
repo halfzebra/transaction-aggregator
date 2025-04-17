@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "NODE_OPTIONS='--loader ts-node/esm' ts-node ./src/index.ts",
-     "dev": "NODE_OPTIONS='--loader ts-node/esm' nodemon ./src/index.ts"
+    "start:dev": "NODE_OPTIONS='--loader ts-node/esm' nodemon ./src/index.ts"
   },
   "type": "module",
   "dependencies": {
