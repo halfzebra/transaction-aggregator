@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
 import { TransactionDataSource } from './transaction-data-source';
-import { AggregatedTransaction } from '../../../../shared/entities/aggregated-transaction.entity';
+import { AggregatedTransaction } from '../shared/entities/aggregated-transaction.entity';
 
 @Injectable()
 export class TransactionAggregator {

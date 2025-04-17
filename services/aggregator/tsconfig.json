@@ -23,6 +23,11 @@
     },
     "rootDir": "."
   },
+  "references": [
+    {
+      "path": "../../shared"
+    }
+  ],
   "include": [
     "src/**/*",
     "../../shared/src/**/*"
