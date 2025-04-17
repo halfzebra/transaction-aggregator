@@ -111,6 +111,11 @@ const openApiSpec: OpenAPIV3.Document = {
   },
 };
 
+// Add before the swagger UI setup
+app.get('/api-docs/swagger.json', (req, res) => {
+  res.json(openApiSpec);
+});
+
 // Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 

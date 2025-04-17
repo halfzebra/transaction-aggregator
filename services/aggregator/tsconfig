@@ -6,26 +6,21 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
+    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@shared/*": ["../../shared/src/*"],
-      "shared/*": ["../../shared/src/*"]
-    },
-    "rootDir": "."
+    "noFallthroughCasesInSwitch": true,
+    "rootDir": "./src"
   },
   "include": [
-    "src/**/*",
-    "../../shared/src/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

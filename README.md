@@ -26,6 +26,7 @@ graph LR
 - `docker-compose.yml` for local development and testing with real PostgreSQL
 - Higher-quality mock data with stateful users for correctness and data consistency
 - Use Redis for caching
+- generate transaction-api on build and don't store generated client in the repo
 
 ### Production Architecture
 

@@ -1,16 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { databaseConfig } from './config/database.config';
+import { TransactionDataSource } from './transactions/transaction-data-source';
+import { TransactionAggregator } from './transactions/transaction-aggregator';
 import { AggregatedTransaction } from '../../../shared/entities/aggregated-transaction.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(databaseConfig),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: '../../data/transactions.sqlite',
+      entities: [AggregatedTransaction],
+      synchronize: true, // disable in production
+    }),
     TypeOrmModule.forFeature([AggregatedTransaction]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [TransactionDataSource, TransactionAggregator],
+  exports: [TransactionDataSource, TransactionAggregator],
 })
 export class AppModule {}
