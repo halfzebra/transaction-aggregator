@@ -10,7 +10,7 @@ const port = 3000;
 // Rate limiting - 5 requests per minute
 const transactionLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 5,
+  max: 500000,
   message: {
     status: 429,
     message:
