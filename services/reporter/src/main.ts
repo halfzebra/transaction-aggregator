@@ -14,11 +14,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3004);
+  await app.listen(process.env.PORT ?? 3002);
 
   console.log('');
-  console.log(`🚀 Server running at http://localhost:3004`);
-  console.log(`📚 API documentation at http://localhost:3004/api`);
+  console.log(`🚀 Server running at http://localhost:3002`);
+  console.log(`📚 API documentation at http://localhost:3002/api`);
   console.log('');
 }
 bootstrap();

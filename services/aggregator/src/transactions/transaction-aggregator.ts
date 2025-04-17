@@ -84,10 +84,10 @@ export class TransactionAggregator {
         const amount = Number(transaction.amount) || 0;
 
         switch (transaction.type) {
-          case 'earn':
+          case 'earned':
             aggregation.earned += amount;
             break;
-          case 'spend':
+          case 'spent':
             aggregation.spent += amount;
             break;
           case 'payout':

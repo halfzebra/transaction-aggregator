@@ -1,5 +1,47 @@
 # Transaction Aggregator System
 
+## Quick Start
+
+### Prerequisites
+- Node.js 18+ (`brew install node`)
+- Git (`brew install git`)
+
+### Run Services
+
+1. Clone and setup:
+```bash
+git clone git@github.com:yourusername/transaction-aggregation.git
+cd transaction-aggregation
+```
+
+2. Start each service in separate terminals:
+
+```bash
+# Terminal 1: Transaction API
+cd services/transaction-api
+npm install
+npm run start:dev     # Runs on :3000
+
+# Terminal 2: Aggregator
+cd services/aggregator
+npm install
+npm run start:dev     # Runs on :3001
+
+# Terminal 3: Reporter
+cd services/reporter
+npm install
+npm run start:dev     # Runs on :3002
+```
+
+### Test
+```bash
+# Trigger aggregation
+curl -X POST http://localhost:3001/transactions/aggregate
+
+# View results
+curl http://localhost:3002/users/1/transactions
+```
+
 ## Solution Architecture
 
 While making everything as a single service would be more time efficient, it would not be a good design choice. The architecture should be designed to be scalable and maintainable.
