@@ -3,7 +3,7 @@
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18+ (`brew install node`)
+- Node.js 20+ (`brew install node`)
 - Git (`brew install git`)
 
 ### Run Services

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TransactionController } from './transactions/transaction.controller';
-import { TransactionService } from './transactions/transaction.service';
+import { UsersController } from './users/users.controller';
+import { UsersService } from './users/users.service';
 import { AggregatedTransaction } from './shared/entities/aggregated-transaction.entity';
 
 @Module({
@@ -14,7 +14,7 @@ import { AggregatedTransaction } from './shared/entities/aggregated-transaction.
     }),
     TypeOrmModule.forFeature([AggregatedTransaction]),
   ],
-  controllers: [TransactionController],
-  providers: [TransactionService],
+  controllers: [UsersController],
+  providers: [UsersService],
 })
 export class AppModule {}
