@@ -1,4 +1,14 @@
-# Transaction Aggregator System
+# 🥞 Transaction Aggregator System
+
+## Table of Contents
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Run Services](#run-services)
+  - [Test](#test)
+- [Solution Architecture](#solution-architecture)
+- [Decisions](#decisions)
+- [Ideas](#ideas)
+  - [Production Architecture](#production-architecture)
 
 ## Quick Start
 
@@ -39,7 +49,7 @@ npm run start:dev     # Runs on :3002
 curl -X POST http://localhost:3001/transactions/aggregate
 
 # View results
-curl http://localhost:3002/users/1/transactions
+curl http://localhost:3002/users/uuid/transactions
 ```
 
 ## Solution Architecture
@@ -52,17 +62,19 @@ graph LR
     B -->|Write| C[(Database)]
     D[Reporter API Service] -->|Read| C
     E[End Users] -->|Millions req/day| D
-``` 
-
-## Focus on
-
-- Integrate all the services in a reliable way first
-- Focus on correctness and data consistency later
+```
 
 ## Decisions
 
+- Integrate all the services in a reliable way first, focus on correctness and data consistency later
+- Focus on making the entire system **testable**, leave tests for the end:
+    - NestJS for Dependency injection(easy to mock side-effects)
+    - TypeORM for ORM(easy to mock DB)
+    - All services in the same repo to enable easy integration testing in CI/CD
+    - All serces have predictable data contracts
+    - [transaction-api](/services/transaction-api/) mock server, which replicates the real data source(as much as it is possible)
 - Create a mock transaction-api using Faker, OpenAPI and rate limiting
-- Use nest CLI to bootstrap the transaction-aggregator
+- Use nest CLI to bootstrap the [aggregator](/services/aggregator/)
 - NPM for simplicity
 - Use TypeORM and Sqlite for simplicity
 - Generate interfaces from OpenAPI spec using `openapi-typescript-codegen`
@@ -71,10 +83,12 @@ graph LR
 
 ## Ideas
 
+- Improve logging
 - `docker-compose.yml` for local development and testing with real PostgreSQL
 - Higher-quality mock data with stateful users for correctness and data consistency
 - Use Redis for caching
-- generate transaction-api on build and don't store generated client in the repo
+- Generate transaction-api on build and don't store generated client in the repo
+- Postman collection for testing the default journey
 
 ### Production Architecture
 
